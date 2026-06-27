@@ -403,5 +403,3 @@ function toggleMusic() {
     button.textContent = "ðŸ”‡ Himno";
   }
 }
-
-
