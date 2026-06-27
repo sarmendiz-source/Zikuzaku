@@ -85,7 +85,7 @@ let players = [
     teams: [["Argentina",0],["Inglaterra",0],["Colombia",0],["Suiza",0],["JapÃ³n",0],["Austria",0],["Escocia",0],["Egipto",0],["Australia",0],["RD Congo",0],["Curazao",0]]
   },
   {
-    name: "MIKEL XABIER",
+    name: "MIKELXABIER",
     points: 0,
     img: "img/xabier.png",
     shirt: "Argentina",
