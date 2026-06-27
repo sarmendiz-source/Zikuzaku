@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PORRALAB ZIKU ZAKU</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <div class="intro" id="intro">
+    <div class="intro-card">
+      <div class="intro-kicker">⚽ Himno oficial de la porra</div>
+      <h1>PORRALAB<br><span>ZIKU ZAKU</span></h1>
+      <p>Entra en la porra, activa el himno y prepárate para ver quién manda en el Mundial.</p>
+      <button class="intro-button" onclick="startPorralab()">▶ Entrar en la porra</button>
+    </div>
+  </div>
+
+  <audio id="himno" src="audio/ziku-zaku-gol.mp3" preload="auto" loop></audio>
+  <button class="music-toggle" id="musicToggle" onclick="toggleMusic()">🔊 Himno</button>
+
+  <div class="page">
+    <header>
+      <div class="logo">PORRALAB<br><span>ZIKU ZAKU</span></div>
+      <div class="hero-title">
+        Ranking vivo<br>del Mundial 2026
+        <small>Haz clic en cada cromo: arriba descripción, abajo tabla de puntuaciones.</small>
+      </div>
+    </header>
+
+    <nav>
+      <a href="#ranking">🏆 Clasificación</a>
+      <a href="#jugadores">👥 Jugadores</a>
+      <a href="#normas">📖 Normas</a>
+      <button class="update" onclick="demoChange()">🔄 Simular cambio</button>
+    </nav>
+
+    <main>
+      <div class="leader-banner" id="leaderBanner"></div>
+
+      <div class="layout">
+        <section class="panel" id="ranking">
+          <h2>🏆 Clasificación</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Pos.</th>
+                <th>Jugador</th>
+                <th>Puntos</th>
+              </tr>
+            </thead>
+            <tbody id="rankingBody"></tbody>
+          </table>
+        </section>
+
+        <section class="panel" id="jugadores">
+          <h2>👥 Cromos ordenados por puntos</h2>
+          <div class="cards" id="cards"></div>
+        </section>
+      </div>
+
+      <section class="panel" id="normas">
+        <h2>📖 Normas</h2>
+        <div class="rules">
+          <div class="rule">
+            <h3>Resultado</h3>
+            <ul>
+              <li>Victoria: puntos según grupo.</li>
+              <li>Empate: puntos según grupo.</li>
+              <li>Derrota: 0.</li>
+            </ul>
+          </div>
+
+          <div class="rule">
+            <h3>Prórroga</h3>
+            <ul>
+              <li>Victoria en prórroga: +10.</li>
+              <li>Empate tras prórroga: +2.</li>
+            </ul>
+          </div>
+
+          <div class="rule">
+            <h3>Penales</h3>
+            <ul>
+              <li>Victoria en penaltis: +3.</li>
+            </ul>
+          </div>
+
+          <div class="rule">
+            <h3>Rondas</h3>
+            <ul>
+              <li>16avos +5.</li>
+              <li>Octavos +10.</li>
+              <li>Cuartos +15.</li>
+              <li>Semis +20.</li>
+            </ul>
+          </div>
+
+          <div class="rule">
+            <h3>Finales</h3>
+            <ul>
+              <li>3º +10.</li>
+              <li>2º +20.</li>
+              <li>Campeón +40.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <p id="status">Modo maqueta: luego la API cambiará los puntos y esta fila se reordenará sola.</p>
+    </main>
+
+    <footer>PORRALAB ZIKU ZAKU · Ranking automático con fichas</footer>
+  </div>
+
+  <div class="modal" id="modal" onclick="closeFicha()">
+    <div class="sheet" onclick="event.stopPropagation()">
+      <div class="sheet-card">
+        <img id="sheetImg" src="" alt="">
+      </div>
+
+      <div class="sheet-info">
+        <div class="sheet-top">
+          <div>
+            <h2 class="sheet-name" id="sheetName">LEIRE</h2>
+            <div class="sheet-meta" id="sheetMeta"></div>
+          </div>
+
+          <div class="sheet-points">
+            <strong id="sheetPoints">131</strong>
+            PUNTOS
+          </div>
+        </div>
+
+        <div class="bio-box">
+          <h3 id="bioTitle">Perfil</h3>
+          <p id="bioText"></p>
+        </div>
+
+        <div class="mini-stats">
+          <div class="stat"><b id="sheetRank">1</b><span>Posición</span></div>
+          <div class="stat"><b id="sheetTeams">11</b><span>Equipos</span></div>
+          <div class="stat"><b id="sheetActive">0</b><span>Con puntos</span></div>
+          <div class="stat"><b id="sheetBest">0</b><span>Mejor equipo</span></div>
+        </div>
+
+        <h3 class="score-table-title">Tabla de puntuaciones</h3>
+
+        <table class="score-table">
+          <thead>
+            <tr>
+              <th>Equipo</th>
+              <th>Puntos</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="sheetScoreRows"></tbody>
+        </table>
+
+        <button class="close" onclick="closeFicha()">Cerrar ficha</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
