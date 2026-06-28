@@ -198,7 +198,7 @@ async function updateFromApi(){
     renderStats(data.upcoming || [], data.players || []);
     renderEquipos(data.teamStats || {});
     renderGoleadores();
-    renderCuriosidades(data.players || []);
+    renderCuriosidades(players);
     status.textContent = "✅ Puntos actualizados con resultados oficiales — " + new Date().toLocaleString("es-ES");
   }catch(e){
     console.error(e);
