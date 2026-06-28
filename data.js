@@ -22,7 +22,7 @@ const PLAYERS_DATA = [
       ["Egipto",         14],
       ["Australia",      15],
       ["RD Congo",       48],
-      ["Cabo Verde",      0],
+
       ["Curazao",         0]
     ]
   },
@@ -66,7 +66,7 @@ const PLAYERS_DATA = [
       ["Egipto",         14],
       ["Australia",      15],
       ["RD Congo",       48],
-      ["Cabo Verde",      0],
+
       ["Curazao",         0]
     ]
   },
@@ -88,7 +88,7 @@ const PLAYERS_DATA = [
       ["Egipto",         14],
       ["Australia",      15],
       ["RD Congo",       48],
-      ["Cabo Verde",      0],
+
       ["Curazao",         0]
     ]
   },
