@@ -186,9 +186,34 @@ export default {
       return new Response(JSON.stringify(data), { headers: CORS });
     }
 
+    // Ruta /debug — ver datos crudos de la API
+    if(url.pathname.endsWith("/debug")){
+      const res = await fetch(`${API_BASE}/competitions/${COMPETITION}/matches?dateFrom=2026-06-01`, {
+        headers: { "X-Auth-Token": API_KEY }
+      });
+      const data = await res.json();
+      const matches = data.matches || [];
+      const stages = [...new Set(matches.map(m => m.stage))];
+      const statuses = [...new Set(matches.map(m => m.status))];
+      const sample = matches.slice(0,3).map(m=>({id:m.id,stage:m.stage,status:m.status,home:m.homeTeam?.name,away:m.awayTeam?.name,date:m.utcDate,winner:m.score?.winner}));
+      const finished = matches.filter(m=>["FINISHED","AWARDED"].includes(m.status));
+      // Contar resultados por equipo seleccionado
+      const allTeams = [...new Set(PLAYERS.flatMap(p=>p.teams))];
+      const teamSummary = {};
+      for(const team of allTeams){
+        const rule = TEAM_RULES[team];
+        if(!rule) continue;
+        const teamMatches = finished.filter(m => matchTeam(team, m.homeTeam?.name||"") || matchTeam(team, m.awayTeam?.name||""));
+        const wins = teamMatches.filter(m=>getResult(m,team)==="win").length;
+        const draws = teamMatches.filter(m=>getResult(m,team)==="draw").length;
+        teamSummary[team] = {wins, draws, total: teamMatches.length, stages:[...new Set(teamMatches.map(m=>m.stage))]};
+      }
+      return new Response(JSON.stringify({ok:true, total:matches.length, finished:finished.length, stages, statuses, sample, teamSummary}), { headers: CORS });
+    }
+
     // Ruta principal — calcular puntos
     try {
-      const res = await fetch(`${API_BASE}/competitions/${COMPETITION}/matches?stage=GROUP_STAGE,LAST_32,ROUND_OF_32,LAST_16,ROUND_OF_16,QUARTER_FINALS,SEMI_FINALS,FINAL,THIRD_PLACE`, {
+      const res = await fetch(`${API_BASE}/competitions/${COMPETITION}/matches?dateFrom=2026-06-01&stage=GROUP_STAGE,LAST_32,ROUND_OF_32,LAST_16,ROUND_OF_16,QUARTER_FINALS,SEMI_FINALS,FINAL,THIRD_PLACE`, {
         headers: { "X-Auth-Token": API_KEY }
       });
 
