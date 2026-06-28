@@ -1,59 +1,59 @@
 // ============================================================
-// PORRALAB ZIKU ZAKU â€” script.js
+// PORRALAB ZIKU ZAKU — script.js
 // Conecta con el Worker zikuzakuapi (Cloudflare) que a su vez
 // consulta football-data.org y devuelve los partidos del Mundial.
 // ============================================================
 
 const API_URL = "https://zikuzakuapi.sarmendiz.workers.dev/";
 
-// --- Tabla de equipos: puntos por victoria/empate segÃºn su grupo ---
+// --- Tabla de equipos: puntos por victoria/empate según su grupo ---
 const TEAM_RULES = {
-  "EspaÃ±a":{api:["Spain"],win:21,draw:7},
+  "España":{api:["Spain"],win:21,draw:7},
   "Francia":{api:["France"],win:21,draw:7},
   "Argentina":{api:["Argentina"],win:21,draw:7},
   "Portugal":{api:["Portugal"],win:21,draw:7},
   "Inglaterra":{api:["England"],win:24,draw:8},
   "Brasil":{api:["Brazil"],win:24,draw:8},
   "Alemania":{api:["Germany"],win:24,draw:8},
-  "PaÃ­ses Bajos":{api:["Netherlands"],win:24,draw:8},
+  "Países Bajos":{api:["Netherlands"],win:24,draw:8},
   "Marruecos":{api:["Morocco"],win:27,draw:9},
-  "BÃ©lgica":{api:["Belgium"],win:27,draw:9},
+  "Bélgica":{api:["Belgium"],win:27,draw:9},
   "Croacia":{api:["Croatia"],win:27,draw:9},
   "Colombia":{api:["Colombia"],win:27,draw:9},
   "Noruega":{api:["Norway"],win:30,draw:10},
   "Uruguay":{api:["Uruguay"],win:30,draw:10},
   "Senegal":{api:["Senegal"],win:30,draw:10},
   "Suiza":{api:["Switzerland"],win:30,draw:10},
-  "JapÃ³n":{api:["Japan"],win:33,draw:11},
+  "Japón":{api:["Japan"],win:33,draw:11},
   "USA":{api:["United States","USA"],win:33,draw:11},
-  "Turquia":{api:["Turkey","TÃ¼rkiye"],win:33,draw:11},
+  "Turquia":{api:["Turkey","Türkiye"],win:33,draw:11},
   "Ecuador":{api:["Ecuador"],win:33,draw:11},
   "Austria":{api:["Austria"],win:36,draw:12},
   "Suecia":{api:["Sweden"],win:36,draw:12},
   "Paraguay":{api:["Paraguay"],win:36,draw:12},
-  "MÃ©xico":{api:["Mexico"],win:36,draw:12},
+  "México":{api:["Mexico"],win:36,draw:12},
   "Corea del Sur":{api:["South Korea","Korea Republic"],win:39,draw:13},
   "Escocia":{api:["Scotland"],win:39,draw:13},
-  "Costa de Marfil":{api:["Ivory Coast","CÃ´te d'Ivoire"],win:39,draw:13},
-  "CanadÃ¡":{api:["Canada"],win:39,draw:13},
+  "Costa de Marfil":{api:["Ivory Coast","Côte d'Ivoire"],win:39,draw:13},
+  "Canadá":{api:["Canada"],win:39,draw:13},
   "Bosnia":{api:["Bosnia and Herzegovina"],win:42,draw:14},
   "Republica Checa":{api:["Czechia","Czech Republic"],win:42,draw:14},
   "Egipto":{api:["Egypt"],win:42,draw:14},
   "Ghana":{api:["Ghana"],win:42,draw:14},
   "Argelia":{api:["Algeria"],win:45,draw:15},
-  "TÃºnez":{api:["Tunisia"],win:45,draw:15},
+  "Túnez":{api:["Tunisia"],win:45,draw:15},
   "Australia":{api:["Australia"],win:45,draw:15},
   "Iran":{api:["Iran"],win:45,draw:15},
-  "Arabia SaudÃ­":{api:["Saudi Arabia"],win:48,draw:16},
+  "Arabia Saudí":{api:["Saudi Arabia"],win:48,draw:16},
   "Qatar":{api:["Qatar"],win:48,draw:16},
   "RD Congo":{api:["DR Congo","Congo DR"],win:48,draw:16},
-  "SudÃ¡frica":{api:["South Africa"],win:48,draw:16},
+  "Sudáfrica":{api:["South Africa"],win:48,draw:16},
   "Nueva Zelanda":{api:["New Zealand"],win:51,draw:17},
-  "UzbekistÃ¡n":{api:["Uzbekistan"],win:51,draw:17},
+  "Uzbekistán":{api:["Uzbekistan"],win:51,draw:17},
   "Cabo Verde":{api:["Cape Verde"],win:51,draw:17},
-  "PanamÃ¡":{api:["Panama"],win:51,draw:17},
-  "HaitÃ­":{api:["Haiti"],win:54,draw:18},
-  "Curazao":{api:["Curacao","CuraÃ§ao"],win:54,draw:18},
+  "Panamá":{api:["Panama"],win:51,draw:17},
+  "Haití":{api:["Haiti"],win:54,draw:18},
+  "Curazao":{api:["Curacao","Curaçao"],win:54,draw:18},
   "Iraq":{api:["Iraq"],win:54,draw:18},
   "Jordania":{api:["Jordan"],win:54,draw:18}
 };
@@ -71,30 +71,30 @@ const ROUND_BONUS = {
 
 // --- Jugadores y sus 11 equipos elegidos ---
 let players = [
-  {name:"ALBA",img:"img/alba.png",shirt:"Escocia",number:7,animal:"BÃºho",
-   bio:"Le gustan las galletitas de dinosaurios y el viento en su sÃ©ptimo piso.",
-   teams:[["Argentina",0],["Inglaterra",0],["Colombia",0],["Suiza",0],["JapÃ³n",0],["Austria",0],["Escocia",0],["Egipto",0],["Australia",0],["RD Congo",0],["Curazao",0]]},
+  {name:"ALBA",img:"img/alba.png",shirt:"Escocia",number:7,animal:"Búho",
+   bio:"Le gustan las galletitas de dinosaurios y el viento en su séptimo piso.",
+   teams:[["Argentina",0],["Inglaterra",0],["Colombia",0],["Suiza",0],["Japón",0],["Austria",0],["Escocia",0],["Egipto",0],["Australia",0],["RD Congo",0],["Curazao",0]]},
   {name:"MIKEL XABIER",img:"img/xabier.png",shirt:"Argentina",number:6,animal:"Capibara",
    bio:"Le gusta hablar con personas desconocidas y con personas de la tercera edad.",
-   teams:[["Argentina",0],["Alemania",0],["Marruecos",0],["Noruega",0],["USA",0],["MÃ©xico",0],["Costa de Marfil",0],["Egipto",0],["Australia",0],["RD Congo",0],["Curazao",0]]},
-  {name:"LEIRE",img:"img/leire.png",shirt:"EspaÃ±a",number:9,animal:"Pantera",
+   teams:[["Argentina",0],["Alemania",0],["Marruecos",0],["Noruega",0],["USA",0],["México",0],["Costa de Marfil",0],["Egipto",0],["Australia",0],["RD Congo",0],["Curazao",0]]},
+  {name:"LEIRE",img:"img/leire.png",shirt:"España",number:9,animal:"Pantera",
    bio:"Le gusta la Virgen del Pilar y la paloterapia.",
-   teams:[["EspaÃ±a",0],["Alemania",0],["Colombia",0],["Noruega",0],["JapÃ³n",0],["MÃ©xico",0],["CanadÃ¡",0],["Ghana",0],["Iran",0],["SudÃ¡frica",0],["HaitÃ­",0]]},
+   teams:[["España",0],["Alemania",0],["Colombia",0],["Noruega",0],["Japón",0],["México",0],["Canadá",0],["Ghana",0],["Iran",0],["Sudáfrica",0],["Haití",0]]},
   {name:"ITOITZ",img:"img/itoitz.png",shirt:"Francia",number:8,animal:"Border Collie",
    bio:"Le gusta la bici, el Excel y hacer dominadas.",
-   teams:[["Francia",0],["Inglaterra",0],["Colombia",0],["Noruega",0],["USA",0],["MÃ©xico",0],["Corea del Sur",0],["Egipto",0],["Australia",0],["RD Congo",0],["Curazao",0]]},
-  {name:"ANE",img:"img/ane.png",shirt:"MÃ©xico",number:12,animal:"Setter inglÃ©s",
+   teams:[["Francia",0],["Inglaterra",0],["Colombia",0],["Noruega",0],["USA",0],["México",0],["Corea del Sur",0],["Egipto",0],["Australia",0],["RD Congo",0],["Curazao",0]]},
+  {name:"ANE",img:"img/ane.png",shirt:"México",number:12,animal:"Setter inglés",
    bio:"Le gustan las motos y los perros.",
-   teams:[["EspaÃ±a",0],["Alemania",0],["Colombia",0],["Noruega",0],["USA",0],["MÃ©xico",0],["Corea del Sur",0],["Egipto",0],["Australia",0],["RD Congo",0],["Curazao",0]]},
+   teams:[["España",0],["Alemania",0],["Colombia",0],["Noruega",0],["USA",0],["México",0],["Corea del Sur",0],["Egipto",0],["Australia",0],["RD Congo",0],["Curazao",0]]},
   {name:"AITOR",img:"img/aitor.png",shirt:"Brasil",number:10,animal:"Sapo",
-   bio:"DJ y residente en el Bukowski. FanÃ¡tico de Andoni Brun.",
-   teams:[["EspaÃ±a",0],["Brasil",0],["Colombia",0],["Noruega",0],["USA",0],["Suecia",0],["CanadÃ¡",0],["Egipto",0],["Australia",0],["RD Congo",0],["Curazao",0]]}
+   bio:"DJ y residente en el Bukowski. Fanático de Andoni Brun.",
+   teams:[["España",0],["Brasil",0],["Colombia",0],["Noruega",0],["USA",0],["Suecia",0],["Canadá",0],["Egipto",0],["Australia",0],["RD Congo",0],["Curazao",0]]}
 ];
 
 players.forEach(p => p.points = 0);
 
 // ============================================================
-// LÃ“GICA DE CÃLCULO
+// LÓGICA DE CÁLCULO
 // ============================================================
 
 function normalizeName(n){
@@ -119,7 +119,7 @@ function getWinnerName(m){
   return null;
 }
 
-// Detecta si hubo prÃ³rroga/penaltis. football-data.org marca esto en score.duration
+// Detecta si hubo prórroga/penaltis. football-data.org marca esto en score.duration
 // ("REGULAR", "EXTRA_TIME", "PENALTY_SHOOTOUT") y en score.regularTime (resultado a los 90').
 function getExtraInfo(m){
   const duration = m?.score?.duration || "REGULAR";
@@ -154,15 +154,15 @@ function getRoundBonus(m, result){
   return ROUND_BONUS[stage] || 0;
 }
 
-// Bonus de prÃ³rroga/penaltis
+// Bonus de prórroga/penaltis
 function getExtraBonus(m, result){
   const info = getExtraInfo(m);
   let bonus = 0;
   if(info.wentToPenalties){
     if(result === "win") bonus += 3;       // ganar en penaltis
   } else if(info.wentToExtraTime){
-    if(result === "win") bonus += 10;      // ganar en prÃ³rroga
-    if(result === "draw") bonus += 2;      // empatar tras la prÃ³rroga (no deberÃ­a pasar en eliminatorias, pero por si acaso)
+    if(result === "win") bonus += 10;      // ganar en prórroga
+    if(result === "draw") bonus += 2;      // empatar tras la prórroga (no debería pasar en eliminatorias, pero por si acaso)
   }
   return bonus;
 }
@@ -192,22 +192,22 @@ function calculatePointsFromMatches(matches){
 }
 
 // ============================================================
-// CONEXIÃ“N A LA API
+// CONEXIÓN A LA API
 // ============================================================
 
 async function updateFromApi(){
   const status = document.getElementById("status");
-  status.textContent = "â³ Consultando resultados oficiales del Mundial...";
+  status.textContent = "⏳ Consultando resultados oficiales del Mundial...";
   try{
     const res = await fetch(API_URL);
     const data = await res.json();
     if(!data.ok) throw new Error(data.message || "API sin datos");
     calculatePointsFromMatches(data.matches || []);
     render();
-    status.textContent = "âœ… Puntos actualizados con resultados oficiales â€” " + new Date().toLocaleString("es-ES");
+    status.textContent = "✅ Puntos actualizados con resultados oficiales — " + new Date().toLocaleString("es-ES");
   }catch(e){
     console.error(e);
-    status.textContent = "âš ï¸ No se han podido actualizar los resultados. Revisa la conexiÃ³n con la API.";
+    status.textContent = "⚠️ No se han podido actualizar los resultados. Revisa la conexión con la API.";
   }
 }
 
@@ -236,9 +236,9 @@ function medalClass(r){
 }
 
 function medalIcon(r){
-  if(r === 1) return "ðŸ¥‡";
-  if(r === 2) return "ðŸ¥ˆ";
-  if(r === 3) return "ðŸ¥‰";
+  if(r === 1) return "🥇";
+  if(r === 2) return "🥈";
+  if(r === 3) return "🥉";
   return String(r);
 }
 
@@ -248,7 +248,7 @@ function render(){
   const leaders = ordered.filter(p => p.points === ordered[0].points).map(p => p.name).join(" y ");
 
   document.getElementById("leaderBanner").innerHTML =
-    `<h2>ðŸ”¥ Ahora va ${leaders.includes(" y ") ? "primero (empate)" : "primero"}: <strong>${leaders}</strong></h2>
+    `<h2>🔥 Ahora va ${leaders.includes(" y ") ? "primero (empate)" : "primero"}: <strong>${leaders}</strong></h2>
      <div style="font-family:'Anton',sans-serif;font-size:1.4rem;color:#d4af37;">${ordered[0].points} puntos</div>`;
 
   const rankingBody = document.getElementById("rankingBody");
@@ -285,9 +285,9 @@ function openFicha(name){
   document.getElementById("sheetImg").src = p.img;
   document.getElementById("sheetImg").alt = p.name;
   document.getElementById("sheetName").textContent = p.name;
-  document.getElementById("sheetMeta").textContent = `${p.animal} Â· camiseta de ${p.shirt} #${p.number}`;
+  document.getElementById("sheetMeta").textContent = `${p.animal} · camiseta de ${p.shirt} #${p.number}`;
   document.getElementById("sheetPoints").textContent = p.points;
-  document.getElementById("bioTitle").textContent = `${p.name} â€” ${p.animal}`;
+  document.getElementById("bioTitle").textContent = `${p.name} — ${p.animal}`;
   document.getElementById("bioText").textContent = p.bio;
   document.getElementById("sheetRank").textContent = ranks[i];
   document.getElementById("sheetTeams").textContent = p.teams.length;
@@ -310,7 +310,7 @@ function closeFicha(){
 }
 
 // ============================================================
-// PANTALLA DE BIENVENIDA Y MÃšSICA
+// PANTALLA DE BIENVENIDA Y MÚSICA
 // ============================================================
 
 let musicPlaying = false;
@@ -325,10 +325,10 @@ function startPorralab(){
 
   audio.play().then(() => {
     musicPlaying = true;
-    document.getElementById("musicToggle").textContent = "ðŸ”Š Himno ON";
+    document.getElementById("musicToggle").textContent = "🔊 Himno ON";
   }).catch(() => {
     musicPlaying = false;
-    document.getElementById("musicToggle").textContent = "ðŸ”‡ Himno OFF";
+    document.getElementById("musicToggle").textContent = "🔇 Himno OFF";
   });
 }
 
@@ -336,11 +336,11 @@ function toggleMusic(){
   const audio = document.getElementById("himno");
   const btn = document.getElementById("musicToggle");
   if(audio.paused){
-    audio.play().then(() => { musicPlaying = true; btn.textContent = "ðŸ”Š Himno ON"; });
+    audio.play().then(() => { musicPlaying = true; btn.textContent = "🔊 Himno ON"; });
   } else {
     audio.pause();
     musicPlaying = false;
-    btn.textContent = "ðŸ”‡ Himno OFF";
+    btn.textContent = "🔇 Himno OFF";
   }
 }
 
