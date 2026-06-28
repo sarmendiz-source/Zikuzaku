@@ -52,7 +52,7 @@ const TEAM_RULES = {
   "Sudáfrica":      { api:["South Africa"],                   win:48, draw:16 },
   "Nueva Zelanda":  { api:["New Zealand"],                    win:51, draw:17 },
   "Uzbekistán":     { api:["Uzbekistan"],                     win:51, draw:17 },
-  "Cabo Verde":     { api:["Cape Verde"],                     win:51, draw:17 },
+  "Cabo Verde":     { api:["Cape Verde","Cape Verde Islands"],  win:51, draw:17 },
   "Panamá":         { api:["Panama"],                         win:51, draw:17 },
   "Haití":          { api:["Haiti"],                          win:54, draw:18 },
   "Curazao":        { api:["Curacao","Curaçao"],              win:54, draw:18 },
@@ -188,7 +188,7 @@ export default {
 
     // Ruta /debug — ver datos crudos de la API
     if(url.pathname.endsWith("/debug")){
-      const res = await fetch(`${API_BASE}/competitions/${COMPETITION}/matches?dateFrom=2026-06-01`, {
+      const res = await fetch(`${API_BASE}/competitions/${COMPETITION}/matches`, {
         headers: { "X-Auth-Token": API_KEY }
       });
       const data = await res.json();
@@ -213,7 +213,7 @@ export default {
 
     // Ruta principal — calcular puntos
     try {
-      const res = await fetch(`${API_BASE}/competitions/${COMPETITION}/matches?dateFrom=2026-06-01&stage=GROUP_STAGE,LAST_32,ROUND_OF_32,LAST_16,ROUND_OF_16,QUARTER_FINALS,SEMI_FINALS,FINAL,THIRD_PLACE`, {
+      const res = await fetch(`${API_BASE}/competitions/${COMPETITION}/matches?stage=GROUP_STAGE,LAST_32,ROUND_OF_32,LAST_16,ROUND_OF_16,QUARTER_FINALS,SEMI_FINALS,FINAL,THIRD_PLACE`, {
         headers: { "X-Auth-Token": API_KEY }
       });
 
