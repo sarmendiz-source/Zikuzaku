@@ -72,8 +72,6 @@ const ROUND_BONUS = {
 // --- Jugadores cargados desde data.js (edita ese archivo para actualizar puntos) ---
 let players = PLAYERS_DATA.map(p => ({...p, points: p.teams.reduce((s,t)=>s+t[1],0)}));
 
-players.forEach(p => p.points = 0);
-
 // ============================================================
 // LÓGICA DE CÁLCULO
 // ============================================================
