@@ -1,31 +1,9 @@
 // ============================================================
 // PORRALAB ZIKU ZAKU — data.js
-// Edita aquí los puntos de cada jugador manualmente
-// Formato: ["Equipo", puntos]
+// Puntos actualizados manualmente desde el Excel
 // ============================================================
 
 const PLAYERS_DATA = [
-  {
-    name: "ALBA",
-    img: "img/alba.png",
-    shirt: "Escocia",
-    number: 7,
-    animal: "Búho",
-    bio: "Le gustan las galletitas de dinosaurios y el viento en su séptimo piso.",
-    teams: [
-      ["Argentina", 0],
-      ["Inglaterra", 0],
-      ["Colombia", 0],
-      ["Suiza", 0],
-      ["Japón", 0],
-      ["Austria", 0],
-      ["Escocia", 0],
-      ["Egipto", 0],
-      ["Australia", 0],
-      ["RD Congo", 0],
-      ["Curazao", 0]
-    ]
-  },
   {
     name: "MIKEL XABIER",
     img: "img/xabier.png",
@@ -34,38 +12,40 @@ const PLAYERS_DATA = [
     animal: "Capibara",
     bio: "Le gusta hablar con personas desconocidas y con personas de la tercera edad.",
     teams: [
-      ["Argentina", 0],
-      ["Alemania", 0],
-      ["Marruecos", 0],
-      ["Noruega", 0],
-      ["USA", 0],
-      ["México", 0],
-      ["Costa de Marfil", 0],
-      ["Egipto", 0],
-      ["Australia", 0],
-      ["RD Congo", 0],
-      ["Curazao", 0]
+      ["Argentina",      21],
+      ["Alemania",        0],
+      ["Marruecos",      27],
+      ["Noruega",         0],
+      ["USA",             0],
+      ["México",         36],
+      ["Costa de Marfil",39],
+      ["Egipto",         14],
+      ["Australia",      15],
+      ["RD Congo",       48],
+      ["Cabo Verde",      0],
+      ["Curazao",         0]
     ]
   },
   {
-    name: "LEIRE",
-    img: "img/leire.png",
-    shirt: "España",
-    number: 9,
-    animal: "Pantera",
-    bio: "Le gusta la Virgen del Pilar y la paloterapia.",
+    name: "ALBA",
+    img: "img/alba.png",
+    shirt: "Escocia",
+    number: 7,
+    animal: "Búho",
+    bio: "Le gustan las galletitas de dinosaurios y el viento en su séptimo piso.",
     teams: [
-      ["España", 0],
-      ["Alemania", 0],
-      ["Colombia", 0],
-      ["Noruega", 0],
-      ["Japón", 0],
-      ["México", 0],
-      ["Canadá", 0],
-      ["Ghana", 0],
-      ["Iran", 0],
-      ["Sudáfrica", 0],
-      ["Haití", 0]
+      ["Argentina",  21],
+      ["Inglaterra", 24],
+      ["Colombia",    9],
+      ["Suiza",      30],
+      ["Japón",      11],
+      ["Austria",    12],
+      ["Escocia",     0],
+      ["Egipto",     14],
+      ["Australia",  15],
+      ["RD Congo",   48],
+      ["Cabo Verde",  0],
+      ["Curazao",     0]
     ]
   },
   {
@@ -76,17 +56,18 @@ const PLAYERS_DATA = [
     animal: "Border Collie",
     bio: "Le gusta la bici, el Excel y hacer dominadas.",
     teams: [
-      ["Francia", 0],
-      ["Inglaterra", 0],
-      ["Colombia", 0],
-      ["Noruega", 0],
-      ["USA", 0],
-      ["México", 0],
-      ["Corea del Sur", 0],
-      ["Egipto", 0],
-      ["Australia", 0],
-      ["RD Congo", 0],
-      ["Curazao", 0]
+      ["Francia",        21],
+      ["Inglaterra",     24],
+      ["Colombia",        9],
+      ["Noruega",         0],
+      ["USA",             0],
+      ["México",         36],
+      ["Corea del Sur",   0],
+      ["Egipto",         14],
+      ["Australia",      15],
+      ["RD Congo",       48],
+      ["Cabo Verde",      0],
+      ["Curazao",         0]
     ]
   },
   {
@@ -97,17 +78,18 @@ const PLAYERS_DATA = [
     animal: "Setter inglés",
     bio: "Le gustan las motos y los perros.",
     teams: [
-      ["España", 0],
-      ["Alemania", 0],
-      ["Colombia", 0],
-      ["Noruega", 0],
-      ["USA", 0],
-      ["México", 0],
-      ["Corea del Sur", 0],
-      ["Egipto", 0],
-      ["Australia", 0],
-      ["RD Congo", 0],
-      ["Curazao", 0]
+      ["España",         21],
+      ["Alemania",        0],
+      ["Colombia",        9],
+      ["Noruega",         0],
+      ["USA",             0],
+      ["México",         36],
+      ["Corea del Sur",   0],
+      ["Egipto",         14],
+      ["Australia",      15],
+      ["RD Congo",       48],
+      ["Cabo Verde",      0],
+      ["Curazao",         0]
     ]
   },
   {
@@ -118,17 +100,40 @@ const PLAYERS_DATA = [
     animal: "Sapo",
     bio: "DJ y residente en el Bukowski. Fanático de Andoni Brun.",
     teams: [
-      ["España", 0],
-      ["Brasil", 0],
-      ["Colombia", 0],
-      ["Noruega", 0],
-      ["USA", 0],
-      ["Suecia", 0],
-      ["Canadá", 0],
-      ["Egipto", 0],
-      ["Australia", 0],
-      ["RD Congo", 0],
-      ["Curazao", 0]
+      ["España",    21],
+      ["Brasil",    24],
+      ["Colombia",   9],
+      ["Noruega",    0],
+      ["USA",        0],
+      ["Suecia",    12],
+      ["Canadá",     0],
+      ["Egipto",    14],
+      ["Australia", 15],
+      ["RD Congo",  48],
+      ["Cabo Verde", 0],
+      ["Curazao",    0]
+    ]
+  },
+  {
+    name: "LEIRE",
+    img: "img/leire.png",
+    shirt: "España",
+    number: 9,
+    animal: "Pantera",
+    bio: "Le gusta la Virgen del Pilar y la paloterapia.",
+    teams: [
+      ["España",     21],
+      ["Alemania",    0],
+      ["Colombia",    9],
+      ["Noruega",     0],
+      ["Japón",      11],
+      ["México",     36],
+      ["Canadá",      0],
+      ["Ghana",       0],
+      ["Iran",       15],
+      ["Sudáfrica",  48],
+      ["Cabo Verde",  0],
+      ["Haití",       0]
     ]
   }
 ];
