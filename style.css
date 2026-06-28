@@ -168,6 +168,17 @@ h1,h2,h3,.logo,.intro-title{font-family:'Anton',sans-serif;letter-spacing:1px;}
 .curiosidad-card .cur-title{font-size:0.8rem;color:var(--oro);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
 .curiosidad-card .cur-text{font-size:0.95rem;color:var(--crema);line-height:1.4;}
 
+/* CURIOSIDADES JUGADORES */
+.curiosidades-jugadores{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;}
+.cur-jugador-card{background:rgba(255,255,255,0.04);border:1px solid rgba(212,175,55,0.2);border-radius:14px;padding:20px;display:flex;gap:14px;align-items:flex-start;}
+.cur-jugador-card img{width:52px;height:52px;border-radius:50%;object-fit:contain;border:2px solid var(--oro);background:var(--azul-medio);flex-shrink:0;}
+.cur-jugador-info{flex:1;}
+.cur-jugador-info h4{font-family:'Anton',sans-serif;font-size:1rem;color:var(--oro);margin-bottom:8px;}
+.cur-jugador-info ul{list-style:none;}
+.cur-jugador-info li{font-size:0.85rem;color:var(--gris-azul);padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.cur-jugador-info li:last-child{border-bottom:none;}
+.cur-jugador-info li strong{color:var(--crema);}
+
 /* PAGE LOGO */
 .page-logo-wrap{text-align:center;padding:32px 20px 0;}
 .page-logo{width:320px;height:320px;border-radius:50%;border:4px solid var(--oro);object-fit:contain;background:var(--azul);box-shadow:0 0 0 8px rgba(212,175,55,0.1),0 12px 32px rgba(0,0,0,0.4);}

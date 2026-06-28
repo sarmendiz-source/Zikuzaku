@@ -201,6 +201,7 @@ async function updateFromApi(){
     renderProximos(data.upcoming || []);
     renderStats(data.upcoming || [], data.players || []);
     renderGoleadores();
+    renderCuriosidades(data.players || []);
     status.textContent = "✅ Puntos actualizados con resultados oficiales — " + new Date().toLocaleString("es-ES");
   }catch(e){
     console.error(e);
@@ -448,6 +449,72 @@ async function renderGoleadores(){
   }catch(e){
     tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--gris-azul);padding:20px">Goleadores no disponibles aún — el torneo acaba de comenzar</td></tr>`;
   }
+}
+
+// ============================================================
+// CURIOSIDADES POR JUGADOR
+// ============================================================
+
+const TEAM_POINTS_MAX = {
+  "Argentina":21,"España":21,"Francia":21,"Portugal":21,
+  "Inglaterra":24,"Brasil":24,"Alemania":24,"Países Bajos":24,
+  "Marruecos":27,"Bélgica":27,"Croacia":27,"Colombia":27,
+  "Noruega":30,"Uruguay":30,"Senegal":30,"Suiza":30,
+  "Japón":33,"USA":33,"Turquia":33,"Ecuador":33,
+  "Austria":36,"Suecia":36,"Paraguay":36,"México":36,
+  "Corea del Sur":39,"Escocia":39,"Costa de Marfil":39,"Canadá":39,
+  "Bosnia":42,"Republica Checa":42,"Egipto":42,"Ghana":42,
+  "Argelia":45,"Túnez":45,"Australia":45,"Iran":45,
+  "Arabia Saudí":48,"Qatar":48,"RD Congo":48,"Sudáfrica":48,
+  "Nueva Zelanda":51,"Uzbekistán":51,"Cabo Verde":51,"Panamá":51,
+  "Haití":54,"Curazao":54,"Iraq":54,"Jordania":54
+};
+
+function renderCuriosidades(apiPlayers){
+  const container = document.getElementById("curiosidadesJugadores");
+  if(!container) return;
+
+  const base = apiPlayers && apiPlayers.length ? apiPlayers : players;
+  const ordered = [...base].sort((a,b) => b.points - a.points);
+
+  // Equipos compartidos entre todos
+  const allTeams = base.map(p => p.teams.map(t => Array.isArray(t) ? t[0] : t));
+  const sharedByAll = allTeams[0].filter(t => allTeams.every(ts => ts.includes(t)));
+
+  container.innerHTML = "";
+
+  base.forEach(p => {
+    const myTeams = p.teams.map(t => Array.isArray(t) ? t[0] : t);
+    const myPts   = p.teams.map(t => Array.isArray(t) ? t : [t, 0]);
+
+    // Equipo más rentable (más puntos)
+    const best = [...myPts].sort((a,b) => b[1]-a[1])[0];
+    // Equipo más arriesgado (mayor win pts = más improbable)
+    const riskiest = [...myTeams].sort((a,b) => (TEAM_POINTS_MAX[b]||0)-(TEAM_POINTS_MAX[a]||0))[0];
+    // Equipos únicos (solo este jugador los tiene)
+    const unique = myTeams.filter(t => base.filter(p2 => p2.teams.some(t2 => (Array.isArray(t2)?t2[0]:t2) === t)).length === 1);
+    // Posición actual
+    const pos = ordered.findIndex(x => x.name === p.name) + 1;
+    // Potencial máximo teórico (si todos sus equipos ganaran todo)
+    const maxPot = myTeams.reduce((s,t) => s + (TEAM_POINTS_MAX[t]||0)*6 + 5+10+15+20+40, 0);
+
+    const card = document.createElement("div");
+    card.className = "cur-jugador-card";
+    card.innerHTML = `
+      <img src="${p.img}" alt="${p.name}">
+      <div class="cur-jugador-info">
+        <h4>${p.name} — ${pos}º con ${p.points} pts</h4>
+        <ul>
+          <li>🌟 Mejor equipo ahora: <strong>${best && best[1]>0 ? best[0]+' ('+best[1]+' pts)' : 'Ninguno suma aún'}</strong></li>
+          <li>🎲 Apuesta más arriesgada: <strong>${riskiest||'—'}</strong> (${TEAM_POINTS_MAX[riskiest]||0} pts/victoria)</li>
+          <li>🔒 Equipos únicos suyos: <strong>${unique.length ? unique.join(', ') : 'Ninguno — comparte todos'}</strong></li>
+          <li>🤝 Equipos que comparte con todos: <strong>${sharedByAll.length ? sharedByAll.join(', ') : 'Ninguno'}</strong></li>
+          <li>📈 Potencial máximo teórico: <strong>${maxPot} pts</strong></li>
+        </ul>
+      </div>
+    `;
+    container.appendChild(card);
+  });
 }
 
 // ============================================================
