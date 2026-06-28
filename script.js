@@ -191,10 +191,15 @@ async function updateFromApi(){
     const res = await fetch(API_URL);
     const data = await res.json();
     if(!data.ok) throw new Error(data.message || "API sin datos");
-    calculatePointsFromMatches(data.matches || []);
+
+    // El Worker ya devuelve los puntos calculados — solo los asignamos
+    if(data.players && data.players.length){
+      players = data.players.map(p => ({...p, points: p.points}));
+    }
+
     render();
-    renderProximos(data.matches || []);
-    renderStats(data.matches || []);
+    renderProximos(data.upcoming || []);
+    renderStats(data.upcoming || [], data.players || []);
     renderGoleadores();
     status.textContent = "✅ Puntos actualizados con resultados oficiales — " + new Date().toLocaleString("es-ES");
   }catch(e){
