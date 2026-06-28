@@ -12,10 +12,18 @@
 
 <!-- PANTALLA DE BIENVENIDA -->
 <div id="intro" class="intro">
-  <div class="intro-card">
-    <div class="intro-badge">⚽ MUNDIAL 2026 ⚽</div>
+  <div class="intro-glow"></div>
+  <div class="intro-inner">
+    <div class="intro-logo-wrap">
+      <img src="img/logo.png" alt="Porralab Ziku Zaku" class="intro-logo-img" onerror="this.style.display='none';document.getElementById('logo-fallback').style.display='flex'">
+      <div id="logo-fallback" class="intro-logo-fallback">
+        <span style="font-size:3rem">🏆</span>
+        <div style="font-family:'Anton',sans-serif;color:#d4af37;margin-top:8px">PORRALAB<br><small style="color:#9fb0c4">ZIKU ZAKU</small></div>
+      </div>
+    </div>
+    <p class="intro-sub-label">⚽ MUNDIAL 2026 ⚽</p>
     <h1 class="intro-title">PORRALAB<br><span>ZIKU ZAKU</span></h1>
-    <p class="intro-sub">Entra en la porra, activa el himno y prepárate para ver quién manda en el Mundial.</p>
+    <p class="intro-desc">Entra en la porra, activa el himno y prepárate para ver quién manda.</p>
     <button class="btn-entrar" onclick="startPorralab()">▶ ENTRAR EN LA PORRA</button>
   </div>
   <audio id="himno" src="audio/ziku-zaku-gol.mp3" loop></audio>
@@ -26,10 +34,13 @@
 
   <header class="topbar">
     <div class="topbar-inner">
-      <h1 class="logo">PORRALAB <span>ZIKU ZAKU</span></h1>
+      <div class="logo">PORRALAB <span>ZIKU ZAKU</span></div>
       <nav class="menu">
         <a href="#ranking">🏆 Clasificación</a>
         <a href="#jugadores">👥 Jugadores</a>
+        <a href="#proximos">📅 Partidos</a>
+        <a href="#stats">📊 Stats</a>
+        <a href="#goleadores">⚽ Goleadores</a>
         <a href="#normas">📖 Normas</a>
       </nav>
       <button id="musicToggle" class="music-btn" onclick="toggleMusic()">🔊 Himno ON</button>
@@ -38,14 +49,23 @@
 
   <div id="status" class="status-bar">Cargando datos del Mundial...</div>
 
-  <main>
-    <section id="leaderBanner" class="leader-banner"></section>
+  <div class="page-logo-wrap">
+    <img src="img/logo.png" alt="Porralab Ziku Zaku" class="page-logo">
+  </div>
 
+  <div class="leader-banner">
+    <span class="leader-crown">👑</span>
+    <p class="leader-label">Líder de la porra</p>
+    <div class="leader-name" id="leaderName">—</div>
+    <div class="leader-pts" id="leaderPts">0 puntos</div>
+  </div>
+
+  <main>
     <section id="ranking" class="section">
       <h2 class="section-title">🏆 Clasificación</h2>
       <div class="table-wrap">
         <table class="ranking-table">
-          <thead><tr><th>Pos.</th><th>Jugador</th><th>Puntos</th></tr></thead>
+          <thead><tr><th>Pos.</th><th>Jugador</th><th>Puntos</th><th>Selección</th></tr></thead>
           <tbody id="rankingBody"></tbody>
         </table>
       </div>
@@ -53,55 +73,53 @@
 
     <section id="jugadores" class="section">
       <h2 class="section-title">👥 Cromos de la porra</h2>
-      <p class="section-sub">Haz clic en cada cromo: arriba la descripción, abajo la tabla de puntuaciones.</p>
+      <p class="section-sub">Haz clic en cada cromo para ver la ficha completa.</p>
       <div id="cards" class="cards-row"></div>
     </section>
 
-    <section id="normas" class="section normas">
+    <section id="proximos" class="section">
+      <h2 class="section-title">📅 Próximos partidos</h2>
+      <div class="table-wrap">
+        <table class="ranking-table">
+          <thead><tr><th>Fecha</th><th>Local</th><th>vs</th><th>Visitante</th><th>Fase</th></tr></thead>
+          <tbody id="proximosBody"><tr><td colspan="5" style="text-align:center;color:var(--gris-azul);padding:20px;">Cargando partidos...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="stats" class="section">
+      <h2 class="section-title">📊 Estadísticas y datos curiosos</h2>
+      <div id="statsGrid" class="stats-grid"></div>
+      <div class="curiosidades-grid" id="curiosidadesGrid"></div>
+    </section>
+
+    <section id="goleadores" class="section">
+      <h2 class="section-title">⚽ Mejores jugadores del Mundial</h2>
+      <p class="section-sub">Goleadores y asistentes actualizados en tiempo real.</p>
+      <div class="table-wrap">
+        <table class="ranking-table">
+          <thead><tr><th>Pos.</th><th>Jugador</th><th>País</th><th>Goles</th><th>Asistencias</th></tr></thead>
+          <tbody id="goleadoresBody"><tr><td colspan="5" style="text-align:center;color:var(--gris-azul);padding:20px">Cargando goleadores...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="normas" class="section">
       <h2 class="section-title">📖 Normas</h2>
       <div class="normas-grid">
-        <div class="norma-card">
-          <h3>Fase de grupos</h3>
-          <ul>
-            <li>✅ Victoria → puntos del grupo</li>
-            <li>🤝 Empate → puntos pequeños del grupo</li>
-            <li>❌ Derrota → 0 puntos</li>
-          </ul>
-        </div>
-        <div class="norma-card">
-          <h3>Rondas (bonus al pasar)</h3>
-          <ul>
-            <li>16avos +5</li>
-            <li>Octavos +10</li>
-            <li>Cuartos +15</li>
-            <li>Semis +20</li>
-          </ul>
-        </div>
-        <div class="norma-card">
-          <h3>Finales</h3>
-          <ul>
-            <li>🥉 3º puesto +10</li>
-            <li>🥈 2º puesto +20</li>
-            <li>🏆 Campeón +40</li>
-          </ul>
-        </div>
-        <div class="norma-card">
-          <h3>Prórroga y penaltis</h3>
-          <ul>
-            <li>Victoria en prórroga +10</li>
-            <li>Empate tras prórroga +2</li>
-            <li>Victoria en penaltis +3</li>
-          </ul>
-        </div>
+        <div class="norma-card"><h3>Fase de grupos</h3><ul><li>✅ Victoria → puntos del grupo</li><li>🤝 Empate → puntos pequeños</li><li>❌ Derrota → 0 puntos</li></ul></div>
+        <div class="norma-card"><h3>Rondas (bonus al pasar)</h3><ul><li>16avos +5</li><li>Octavos +10</li><li>Cuartos +15</li><li>Semis +20</li></ul></div>
+        <div class="norma-card"><h3>Finales</h3><ul><li>🥉 3º puesto +10</li><li>🥈 2º puesto +20</li><li>🏆 Campeón +40</li></ul></div>
+        <div class="norma-card"><h3>Prórroga y penaltis</h3><ul><li>Victoria en prórroga +10</li><li>Empate tras prórroga +2</li><li>Victoria en penaltis +3</li></ul></div>
       </div>
       <p class="normas-foot">⚽ Los puntos se calculan automáticamente con los resultados oficiales del Mundial 2026.</p>
     </section>
   </main>
 
-  <footer class="footer">PORRALAB ZIKU ZAKU · Ranking automático con cromos</footer>
+  <footer class="footer">PORRALAB ZIKU ZAKU · Mundial 2026 · Ranking automático</footer>
 </div>
 
-<!-- MODAL FICHA JUGADOR -->
+<!-- MODAL FICHA -->
 <div id="modal" class="modal">
   <div class="modal-content">
     <button class="modal-close" onclick="closeFicha()">✕</button>
@@ -113,10 +131,7 @@
         <div class="modal-points"><span id="sheetPoints"></span> PUNTOS</div>
       </div>
     </div>
-    <div class="modal-bio">
-      <h3 id="bioTitle"></h3>
-      <p id="bioText"></p>
-    </div>
+    <div class="modal-bio"><h3 id="bioTitle"></h3><p id="bioText"></p></div>
     <div class="modal-stats">
       <div><strong id="sheetRank"></strong><span>Posición</span></div>
       <div><strong id="sheetTeams"></strong><span>Equipos</span></div>
@@ -130,6 +145,7 @@
   </div>
 </div>
 
+<script src="data.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

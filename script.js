@@ -69,27 +69,8 @@ const ROUND_BONUS = {
   THIRD_PLACE: 10
 };
 
-// --- Jugadores y sus 11 equipos elegidos ---
-let players = [
-  {name:"ALBA",img:"img/alba.png",shirt:"Escocia",number:7,animal:"Búho",
-   bio:"Le gustan las galletitas de dinosaurios y el viento en su séptimo piso.",
-   teams:[["Argentina",0],["Inglaterra",0],["Colombia",0],["Suiza",0],["Japón",0],["Austria",0],["Escocia",0],["Egipto",0],["Australia",0],["RD Congo",0],["Curazao",0]]},
-  {name:"MIKEL XABIER",img:"img/xabier.png",shirt:"Argentina",number:6,animal:"Capibara",
-   bio:"Le gusta hablar con personas desconocidas y con personas de la tercera edad.",
-   teams:[["Argentina",0],["Alemania",0],["Marruecos",0],["Noruega",0],["USA",0],["México",0],["Costa de Marfil",0],["Egipto",0],["Australia",0],["RD Congo",0],["Curazao",0]]},
-  {name:"LEIRE",img:"img/leire.png",shirt:"España",number:9,animal:"Pantera",
-   bio:"Le gusta la Virgen del Pilar y la paloterapia.",
-   teams:[["España",0],["Alemania",0],["Colombia",0],["Noruega",0],["Japón",0],["México",0],["Canadá",0],["Ghana",0],["Iran",0],["Sudáfrica",0],["Haití",0]]},
-  {name:"ITOITZ",img:"img/itoitz.png",shirt:"Francia",number:8,animal:"Border Collie",
-   bio:"Le gusta la bici, el Excel y hacer dominadas.",
-   teams:[["Francia",0],["Inglaterra",0],["Colombia",0],["Noruega",0],["USA",0],["México",0],["Corea del Sur",0],["Egipto",0],["Australia",0],["RD Congo",0],["Curazao",0]]},
-  {name:"ANE",img:"img/ane.png",shirt:"México",number:12,animal:"Setter inglés",
-   bio:"Le gustan las motos y los perros.",
-   teams:[["España",0],["Alemania",0],["Colombia",0],["Noruega",0],["USA",0],["México",0],["Corea del Sur",0],["Egipto",0],["Australia",0],["RD Congo",0],["Curazao",0]]},
-  {name:"AITOR",img:"img/aitor.png",shirt:"Brasil",number:10,animal:"Sapo",
-   bio:"DJ y residente en el Bukowski. Fanático de Andoni Brun.",
-   teams:[["España",0],["Brasil",0],["Colombia",0],["Noruega",0],["USA",0],["Suecia",0],["Canadá",0],["Egipto",0],["Australia",0],["RD Congo",0],["Curazao",0]]}
-];
+// --- Jugadores cargados desde data.js (edita ese archivo para actualizar puntos) ---
+let players = PLAYERS_DATA.map(p => ({...p, points: p.teams.reduce((s,t)=>s+t[1],0)}));
 
 players.forEach(p => p.points = 0);
 
@@ -167,7 +148,15 @@ function getExtraBonus(m, result){
   return bonus;
 }
 
-function calculatePointsFromMatches(matches){
+function calculatePointsFromMatches(matchesRaw){
+  // Deduplicar por ID para evitar que el mismo partido sume varias veces
+  const seen = new Set();
+  const matches = matchesRaw.filter(m => {
+    if(!m.id || seen.has(m.id)) return false;
+    seen.add(m.id);
+    return true;
+  });
+
   players = players.map(p => {
     let total = 0;
     const teams = p.teams.map(([team]) => {
@@ -204,6 +193,9 @@ async function updateFromApi(){
     if(!data.ok) throw new Error(data.message || "API sin datos");
     calculatePointsFromMatches(data.matches || []);
     render();
+    renderProximos(data.matches || []);
+    renderStats(data.matches || []);
+    renderGoleadores();
     status.textContent = "✅ Puntos actualizados con resultados oficiales — " + new Date().toLocaleString("es-ES");
   }catch(e){
     console.error(e);
@@ -245,17 +237,28 @@ function medalIcon(r){
 function render(){
   const ordered = sortedPlayers();
   const ranks = getRanks(ordered);
-  const leaders = ordered.filter(p => p.points === ordered[0].points).map(p => p.name).join(" y ");
+  const leader = ordered[0];
 
-  document.getElementById("leaderBanner").innerHTML =
-    `<h2>🔥 Ahora va ${leaders.includes(" y ") ? "primero (empate)" : "primero"}: <strong>${leaders}</strong></h2>
-     <div style="font-family:'Anton',sans-serif;font-size:1.4rem;color:#d4af37;">${ordered[0].points} puntos</div>`;
+  document.getElementById("leaderName").textContent = leader.name;
+  document.getElementById("leaderPts").textContent = leader.points + " puntos";
 
   const rankingBody = document.getElementById("rankingBody");
   rankingBody.innerHTML = "";
   ordered.forEach((p,i) => {
+    const r = ranks[i];
     const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${medalIcon(ranks[i])}</td><td>${p.name}</td><td>${p.points}</td>`;
+    if(r === 1) tr.className = "row-first";
+    else if(r === 2) tr.className = "row-second";
+    else if(r === 3) tr.className = "row-third";
+    tr.innerHTML = `
+      <td class="rank-icon">${medalIcon(r)}</td>
+      <td><div class="player-cell">
+        <img class="avatar-sm" src="${p.img}" alt="${p.name}">
+        <span class="player-name-bold">${p.name}</span>
+      </div></td>
+      <td class="pts-cell">${p.points}</td>
+      <td style="color:#9fb0c4;font-size:0.85rem;">${p.shirt}</td>
+    `;
     rankingBody.appendChild(tr);
   });
 
@@ -268,7 +271,10 @@ function render(){
     card.innerHTML = `
       <div class="rank-badge">${medalIcon(ranks[i])}</div>
       <img src="${p.img}" alt="${p.name}">
-      <div class="points-tag">${p.points} pt</div>
+      <div class="card-footer">
+        <span class="card-name">${p.name}</span>
+        <span class="card-pts">${p.points}pt</span>
+      </div>
     `;
     cards.appendChild(card);
   });
@@ -320,7 +326,7 @@ function startPorralab(){
   const app = document.getElementById("app");
   const audio = document.getElementById("himno");
 
-  intro.classList.add("hidden");
+  intro.style.display = "none";
   app.classList.remove("hidden");
 
   audio.play().then(() => {
@@ -342,6 +348,139 @@ function toggleMusic(){
     musicPlaying = false;
     btn.textContent = "🔇 Himno OFF";
   }
+}
+
+// ============================================================
+// ESTADÍSTICAS Y CURIOSIDADES
+// ============================================================
+
+function renderStats(matches){
+  const finished = matches.filter(m => ["FINISHED","AWARDED"].includes(m.status));
+  const total = finished.length;
+
+  // Goles totales
+  let totalGoals = 0;
+  finished.forEach(m => {
+    const ft = m.score?.fullTime;
+    if(ft) totalGoals += (ft.home||0) + (ft.away||0);
+  });
+
+  // Partido con más goles
+  let maxGoals = 0, maxMatch = null;
+  finished.forEach(m => {
+    const ft = m.score?.fullTime;
+    if(ft){
+      const g = (ft.home||0)+(ft.away||0);
+      if(g > maxGoals){ maxGoals = g; maxMatch = m; }
+    }
+  });
+
+  // Equipo más goleador de la porra
+  const teamGoals = {};
+  finished.forEach(m => {
+    const ft = m.score?.fullTime;
+    if(!ft) return;
+    const h = m.homeTeam?.name; const a = m.awayTeam?.name;
+    if(h) teamGoals[h] = (teamGoals[h]||0) + (ft.home||0);
+    if(a) teamGoals[a] = (teamGoals[a]||0) + (ft.away||0);
+  });
+  const topTeam = Object.entries(teamGoals).sort((a,b)=>b[1]-a[1])[0];
+
+  // Jugador líder de la porra
+  const ordered = sortedPlayers();
+
+  const statsGrid = document.getElementById("statsGrid");
+  if(statsGrid){
+    statsGrid.innerHTML = `
+      <div class="stat-card"><span class="stat-val">${total}</span><span class="stat-label">Partidos jugados</span></div>
+      <div class="stat-card"><span class="stat-val">${totalGoals}</span><span class="stat-label">Goles totales</span><div class="stat-sub">${total ? (totalGoals/total).toFixed(1) + " por partido" : ""}</div></div>
+      <div class="stat-card"><span class="stat-val">${topTeam ? topTeam[1] : 0}</span><span class="stat-label">Máximo goleador</span><div class="stat-sub">${topTeam ? topTeam[0] : "—"}</div></div>
+      <div class="stat-card"><span class="stat-val">${ordered[0]?.points||0}</span><span class="stat-label">Mejor puntuación</span><div class="stat-sub">${ordered[0]?.name||"—"}</div></div>
+      <div class="stat-card"><span class="stat-val">${ordered[ordered.length-1]?.points||0}</span><span class="stat-label">Puntuación más baja</span><div class="stat-sub">${ordered[ordered.length-1]?.name||"—"}</div></div>
+      <div class="stat-card"><span class="stat-val">${maxGoals}</span><span class="stat-label">Más goles en un partido</span><div class="stat-sub">${maxMatch ? maxMatch.homeTeam?.name+" vs "+maxMatch.awayTeam?.name : "—"}</div></div>
+    `;
+  }
+
+  // Curiosidades
+  const dif = ordered[0].points - ordered[ordered.length-1].points;
+  const allPts = ordered.map(p=>p.points);
+  const media = Math.round(allPts.reduce((a,b)=>a+b,0)/allPts.length);
+  const bestTeamPorra = ordered.map(p=>({player:p.name, team:[...p.teams].sort((a,b)=>b[1]-a[1])[0]})).sort((a,b)=>b.team[1]-a.team[1])[0];
+
+  const curiosidadesGrid = document.getElementById("curiosidadesGrid");
+  if(curiosidadesGrid){
+    curiosidadesGrid.innerHTML = `
+      <div class="curiosidad-card"><div class="cur-title">🔥 Diferencia líder-colista</div><div class="cur-text">${ordered[0].name} aventaja a ${ordered[ordered.length-1].name} por <strong style="color:var(--oro)">${dif} puntos</strong></div></div>
+      <div class="curiosidad-card"><div class="cur-title">📈 Media de puntos</div><div class="cur-text">La media de la porra está en <strong style="color:var(--oro)">${media} puntos</strong></div></div>
+      <div class="curiosidad-card"><div class="cur-title">🌟 Equipo estrella</div><div class="cur-text">El equipo que más puntos da es <strong style="color:var(--oro)">${bestTeamPorra?.team?.[0]||"—"}</strong> con ${bestTeamPorra?.team?.[1]||0} pts — elegido por ${bestTeamPorra?.player||"—"}</div></div>
+      ${maxMatch ? `<div class="curiosidad-card"><div class="cur-title">💥 Partido más loco</div><div class="cur-text">${maxMatch.homeTeam?.name} vs ${maxMatch.awayTeam?.name} con <strong style="color:var(--oro)">${maxGoals} goles</strong></div></div>` : ""}
+    `;
+  }
+}
+
+async function renderGoleadores(){
+  const tbody = document.getElementById("goleadoresBody");
+  if(!tbody) return;
+  try{
+    const res = await fetch(API_URL + "scorers");
+    const data = await res.json();
+    const scorers = data.scorers || [];
+    if(!scorers.length) throw new Error("sin datos");
+    tbody.innerHTML = "";
+    scorers.slice(0,20).forEach((s,i) => {
+      const tr = document.createElement("tr");
+      if(i<3) tr.className = ["row-first","row-second","row-third"][i];
+      const medals = ["🥇","🥈","🥉"];
+      tr.innerHTML = `
+        <td class="rank-icon">${medals[i]||i+1}</td>
+        <td class="player-name-bold">${s.player?.name||"—"}</td>
+        <td style="color:var(--gris-azul);font-size:0.85rem">${s.team?.name||"—"}</td>
+        <td class="pts-cell">${s.goals??0}</td>
+        <td style="color:var(--gris-azul)">${s.assists??0}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }catch(e){
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--gris-azul);padding:20px">Goleadores no disponibles aún — el torneo acaba de comenzar</td></tr>`;
+  }
+}
+
+// ============================================================
+// PRÓXIMOS PARTIDOS
+// ============================================================
+
+const STAGE_NAMES = {
+  GROUP_STAGE:"Grupos", LAST_32:"16avos", ROUND_OF_32:"16avos",
+  LAST_16:"Octavos", ROUND_OF_16:"Octavos",
+  QUARTER_FINALS:"Cuartos", SEMI_FINALS:"Semis",
+  FINAL:"Final", THIRD_PLACE:"3er puesto"
+};
+
+function renderProximos(matches){
+  const tbody = document.getElementById("proximosBody");
+  if(!tbody) return;
+  const upcoming = matches
+    .filter(m => !["FINISHED","AWARDED"].includes(m.status))
+    .sort((a,b) => new Date(a.utcDate) - new Date(b.utcDate))
+    .slice(0, 20);
+  if(!upcoming.length){
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#9fb0c4;padding:20px">No hay partidos próximos disponibles</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = "";
+  upcoming.forEach(m => {
+    const fecha = new Date(m.utcDate).toLocaleDateString("es-ES",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
+    const fase = STAGE_NAMES[m.stage] || m.stage || "—";
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td style="color:#9fb0c4;font-size:0.85rem;white-space:nowrap">${fecha}</td>
+      <td style="font-weight:700;text-align:right">${m.homeTeam?.name||"—"}</td>
+      <td style="text-align:center;color:#d4af37;font-family:'Anton',sans-serif">VS</td>
+      <td style="font-weight:700">${m.awayTeam?.name||"—"}</td>
+      <td style="color:#9fb0c4;font-size:0.85rem">${fase}</td>
+    `;
+    tbody.appendChild(tr);
+  });
 }
 
 // ============================================================
