@@ -200,6 +200,7 @@ async function updateFromApi(){
     render();
     renderProximos(data.upcoming || []);
     renderStats(data.upcoming || [], data.players || []);
+    renderEquipos(data.teamStats || {});
     renderGoleadores();
     renderCuriosidades(data.players || []);
     status.textContent = "✅ Puntos actualizados con resultados oficiales — " + new Date().toLocaleString("es-ES");
@@ -514,6 +515,44 @@ function renderCuriosidades(apiPlayers){
       </div>
     `;
     container.appendChild(card);
+  });
+}
+
+// ============================================================
+// TABLA DE EQUIPOS
+// ============================================================
+
+function renderEquipos(teamStats){
+  const tbody = document.getElementById("equiposBody");
+  if(!tbody) return;
+
+  // Obtener todos los equipos de la porra con sus jugadores
+  const teamPlayers = {};
+  players.forEach(p => {
+    p.teams.forEach(([team]) => {
+      if(!teamPlayers[team]) teamPlayers[team] = [];
+      teamPlayers[team].push(p.name);
+    });
+  });
+
+  const rows = Object.entries(teamStats).sort((a,b) => b[1].pts - a[1].pts);
+  if(!rows.length){
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--gris-azul);padding:20px">Sin datos</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = "";
+  rows.forEach(([team, s]) => {
+    const tr = document.createElement("tr");
+    const whoHas = (teamPlayers[team] || []).join(", ");
+    tr.innerHTML = `
+      <td><span style="font-weight:700">${team}</span><br><span style="font-size:0.75rem;color:var(--gris-azul)">${whoHas}</span></td>
+      <td style="color:var(--gris-azul);font-size:0.85rem">${s.winPts}</td>
+      <td class="pts-cell">${s.wins}</td>
+      <td style="color:var(--gris-azul);font-size:0.85rem">${s.drawPts}</td>
+      <td style="color:var(--gris-azul)">${s.draws}</td>
+      <td class="pts-cell" style="color:var(--oro)">${s.pts}</td>
+    `;
+    tbody.appendChild(tr);
   });
 }
 

@@ -256,7 +256,34 @@ export default {
           awayTeam: m.awayTeam?.name
         }));
 
-      return new Response(JSON.stringify({ ok:true, players, upcoming, total: matches.length }), { headers: CORS });
+      // Estadísticas por equipo (victorias, empates, puntos)
+      const allTeams = [...new Set(PLAYERS.flatMap(p => p.teams))];
+      const teamStats = {};
+      for(const team of allTeams){
+        const rule = TEAM_RULES[team];
+        if(!rule) continue;
+        const seen2 = new Set();
+        const uniqueMatches = matches.filter(m => {
+          if(seen2.has(m.id)) return false;
+          seen2.add(m.id);
+          return true;
+        });
+        let wins=0, draws=0, pts=0;
+        for(const m of uniqueMatches){
+          if(!["FINISHED","AWARDED"].includes(m.status)) continue;
+          const home = m.homeTeam?.name || "";
+          const away = m.awayTeam?.name || "";
+          const isHome = rule.api.some(a => norm(a) === norm(home));
+          const isAway = rule.api.some(a => norm(a) === norm(away));
+          if(!isHome && !isAway) continue;
+          const winner = m.score?.winner;
+          if(winner === "DRAW"){ draws++; pts += rule.draw; }
+          else if((isHome && winner==="HOME_TEAM")||(isAway && winner==="AWAY_TEAM")){ wins++; pts += rule.win; }
+        }
+        teamStats[team] = {wins, draws, pts, winPts: rule.win, drawPts: rule.draw};
+      }
+
+      return new Response(JSON.stringify({ ok:true, players, upcoming, teamStats, total: matches.length }), { headers: CORS });
 
     } catch(e) {
       return new Response(JSON.stringify({ ok:false, message: e.message }), { headers: CORS, status: 500 });
