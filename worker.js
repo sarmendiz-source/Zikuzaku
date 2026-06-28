@@ -75,22 +75,22 @@ const ROUND_BONUS = {
 const PLAYERS = [
   { name:"ALBA",        img:"img/alba.png",    shirt:"Escocia",   number:7,  animal:"Búho",
     bio:"Le gustan las galletitas de dinosaurios y el viento en su séptimo piso.",
-    teams:["Argentina","Inglaterra","Colombia","Suiza","Japón","Austria","Escocia","Egipto","Australia","RD Congo","Curazao"] },
+    teams:["Argentina","Inglaterra","Colombia","Suiza","Japón","Austria","Escocia","Egipto","Australia","RD Congo","Cabo Verde","Curazao"] },
   { name:"MIKEL XABIER",img:"img/xabier.png",  shirt:"Argentina", number:6,  animal:"Capibara",
     bio:"Le gusta hablar con personas desconocidas y con personas de la tercera edad.",
-    teams:["Argentina","Alemania","Marruecos","Noruega","USA","México","Costa de Marfil","Egipto","Australia","RD Congo","Curazao"] },
+    teams:["Argentina","Alemania","Marruecos","Noruega","USA","México","Costa de Marfil","Egipto","Australia","RD Congo","Cabo Verde","Curazao"] },
   { name:"LEIRE",       img:"img/leire.png",   shirt:"España",    number:9,  animal:"Pantera",
     bio:"Le gusta la Virgen del Pilar y la paloterapia.",
-    teams:["España","Alemania","Colombia","Noruega","Japón","México","Canadá","Ghana","Iran","Sudáfrica","Haití"] },
+    teams:["España","Alemania","Colombia","Noruega","Japón","México","Canadá","Ghana","Iran","Sudáfrica","Cabo Verde","Haití"] },
   { name:"ITOITZ",      img:"img/itoitz.png",  shirt:"Francia",   number:8,  animal:"Border Collie",
     bio:"Le gusta la bici, el Excel y hacer dominadas.",
-    teams:["Francia","Inglaterra","Colombia","Noruega","USA","México","Corea del Sur","Egipto","Australia","RD Congo","Curazao"] },
+    teams:["Francia","Inglaterra","Colombia","Noruega","USA","México","Corea del Sur","Egipto","Australia","RD Congo","Cabo Verde","Curazao"] },
   { name:"ANE",         img:"img/ane.png",     shirt:"México",    number:12, animal:"Setter inglés",
     bio:"Le gustan las motos y los perros.",
-    teams:["España","Alemania","Colombia","Noruega","USA","México","Corea del Sur","Egipto","Australia","RD Congo","Curazao"] },
+    teams:["España","Alemania","Colombia","Noruega","USA","México","Corea del Sur","Egipto","Australia","RD Congo","Cabo Verde","Curazao"] },
   { name:"AITOR",       img:"img/aitor.png",   shirt:"Brasil",    number:10, animal:"Sapo",
     bio:"DJ y residente en el Bukowski. Fanático de Andoni Brun.",
-    teams:["España","Brasil","Colombia","Noruega","USA","Suecia","Canadá","Egipto","Australia","RD Congo","Curazao"] }
+    teams:["España","Brasil","Colombia","Noruega","USA","Suecia","Canadá","Egipto","Australia","RD Congo","Cabo Verde","Curazao"] }
 ];
 
 // ============================================================
