@@ -127,10 +127,19 @@ function getExtraBonus(match, result){
   return 0;
 }
 
+const VALID_STAGES = new Set([
+  "GROUP_STAGE","LAST_32","ROUND_OF_32","LAST_16","ROUND_OF_16",
+  "QUARTER_FINALS","SEMI_FINALS","FINAL","THIRD_PLACE"
+]);
+
 function calcPoints(matches, teams){
-  // Deduplicar por ID
+  // Deduplicar por ID y filtrar solo stages del torneo (no qualifiers)
   const seen = new Set();
-  const unique = matches.filter(m => { if(seen.has(m.id)) return false; seen.add(m.id); return true; });
+  const unique = matches.filter(m => {
+    if(seen.has(m.id)) return false;
+    seen.add(m.id);
+    return VALID_STAGES.has(m.stage);
+  });
 
   const result = {};
   for(const team of teams){
@@ -179,7 +188,7 @@ export default {
 
     // Ruta principal — calcular puntos
     try {
-      const res = await fetch(`${API_BASE}/competitions/${COMPETITION}/matches`, {
+      const res = await fetch(`${API_BASE}/competitions/${COMPETITION}/matches?stage=GROUP_STAGE,LAST_32,ROUND_OF_32,LAST_16,ROUND_OF_16,QUARTER_FINALS,SEMI_FINALS,FINAL,THIRD_PLACE`, {
         headers: { "X-Auth-Token": API_KEY }
       });
 
