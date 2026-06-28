@@ -154,6 +154,8 @@ function calcPoints(matches, teams){
       } else if(res === "draw"){
         pts += rule.draw;
         pts += getExtraBonus(m, res);
+      } else if(res === "loss" && m.stage === "FINAL"){
+        pts += 20; // 2º puesto (finalista)
       }
     }
     result[team] = pts;

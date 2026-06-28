@@ -171,6 +171,8 @@ function calculatePointsFromMatches(matchesRaw){
         } else if(result === "draw"){
           pts += rule.draw;
           pts += getExtraBonus(m, result);
+        } else if(result === "loss" && m.stage === "FINAL"){
+          pts += 20; // 2º puesto (finalista)
         }
       });
       total += pts;
