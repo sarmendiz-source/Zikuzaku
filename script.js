@@ -192,7 +192,10 @@ async function updateFromApi(){
     const data = await res.json();
     if(!data.ok) throw new Error(data.message || "API sin datos");
 
-    // Puntos desde data.js (manual) — no se sobreescriben con la API
+    // Puntos calculados por el worker (automático)
+    if(data.players && data.players.length){
+      players = data.players.map(p => ({...p}));
+    }
     render();
     renderProximos(data.upcoming || []);
     renderStats(data.upcoming || [], data.players || []);
