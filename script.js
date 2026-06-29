@@ -6,6 +6,9 @@
 
 const API_URL = "https://zikuzakuapi.sarmendiz.workers.dev/";
 
+// Partidos anteriores a esta fecha ya están incluidos en data.js
+const DATA_CUTOFF = "2026-06-29T00:00:00Z";
+
 // --- Tabla de equipos: puntos por victoria/empate según su grupo ---
 const TEAM_RULES = {
   "España":{api:["Spain"],win:21,draw:7},
@@ -146,6 +149,38 @@ function getExtraBonus(m, result){
   return bonus;
 }
 
+// Añade puntos de partidos nuevos ENCIMA de los valores base de data.js
+function addPointsFromMatches(matchesRaw){
+  const seen = new Set();
+  const matches = matchesRaw.filter(m => {
+    if(!m.id || seen.has(m.id)) return false;
+    seen.add(m.id);
+    return true;
+  });
+
+  players = players.map(p => {
+    const teams = p.teams.map(([team, existingPts]) => {
+      const rule = TEAM_RULES[team] || {win:0, draw:0};
+      let newPts = 0;
+      matches.forEach(m => {
+        const result = getTeamResult(m, team);
+        if(result === "win"){
+          newPts += rule.win;
+          newPts += getRoundBonus(m, result);
+          newPts += getExtraBonus(m, result);
+        } else if(result === "draw"){
+          newPts += rule.draw;
+          newPts += getExtraBonus(m, result);
+        } else if(result === "loss" && m.stage === "FINAL"){
+          newPts += 20;
+        }
+      });
+      return [team, existingPts + newPts];
+    });
+    return {...p, points: teams.reduce((s,[,v]) => s+v, 0), teams};
+  });
+}
+
 function calculatePointsFromMatches(matchesRaw){
   // Deduplicar por ID para evitar que el mismo partido sume varias veces
   const seen = new Set();
@@ -192,9 +227,10 @@ async function updateFromApi(){
     const data = await res.json();
     if(!data.ok) throw new Error(data.message || "API sin datos");
 
-    // Puntos calculados por el worker (automático)
-    if(data.players && data.players.length){
-      players = data.players.map(p => ({...p}));
+    // Añadir solo partidos nuevos (después del corte) encima de data.js
+    if(data.matches && data.matches.length){
+      const newMatches = data.matches.filter(m => m.utcDate > DATA_CUTOFF);
+      if(newMatches.length) addPointsFromMatches(newMatches);
     }
     render();
     renderProximos(data.upcoming || []);
